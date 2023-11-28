@@ -18,7 +18,7 @@ def widest_barge(n: int, waterways: list[tuple[int, int, int]]) -> list[int]:
     '''
     # dijkstra
 
-    # Initialize graph. Runing time O(n)
+    # Initialize graph. Running time: O(n)
     graph = {}
     for i in range(len(waterways)):
         u = graph[waterways[i][0]] if waterways[i][0] in graph else Vertex(waterways[i][0])
@@ -32,6 +32,9 @@ def widest_barge(n: int, waterways: list[tuple[int, int, int]]) -> list[int]:
         if waterways[i][1] not in graph:
             graph[v.label] = v
 
+    verticesMaxQueue = []
+
+    # print graph for testing
     for key in graph:
         print(f"key: {key}, value: {graph[key].label}, neighbors: {[[neighbor[0].label, neighbor[1]] for neighbor in graph[key].neighbors]}")
     return [0]
