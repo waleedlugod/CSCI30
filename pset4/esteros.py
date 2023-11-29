@@ -5,7 +5,7 @@ def widest_barge(n: int, waterways: list[tuple[int, int, int]]) -> list[int]:
     of n-1 integers where the ith integer denotes the width of the largest
     possible barge that can safely travel from location 0 to location i.
     '''
-    # prims
+    # kruskals
     return [0]
 
 
