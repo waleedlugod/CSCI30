@@ -1,38 +1,53 @@
 #!/usr/bin/env python3
 
-def find(forest: list[set[int]], leaf: int) -> set[int]:
-    for tree in forest:
-        if leaf in tree:
-            return tree
-    return {leaf}
+from heapdict import heapdict
+
+class Vertex:
+    def __init__(self, label):
+        self.label: int = label
+        self.neighbors: list[tuple[Vertex, int]] = []
+        self.predecessor = None
+        self.key = 0
+
+    #testing stuff
+    def __stf__(self):
+        return str(self.label)
+    def __repr__(self):
+        return f"{str(self.label)}"
+        
+    def addNeighbor(self, vertex, weight):
+        self.neighbors.append((vertex, weight))
 
 def widest_barge(n: int, waterways: list[tuple[int, int, int]]) -> list[int]:
-    # kruskals
-    # TODO: make forest heapq
-    mins = [0] * n
     mst = set()
-    forest = []
-    for leaf in range(n):
-        forest.append({leaf})
+    maxBarges = [0] * n
 
-    waterways.sort(key=lambda tup: tup[2], reverse=True)
+    # Initialize the graph
+    esteros = [Vertex(i) for i in range(n)]
     for way in waterways:
-        tree0 = find(forest, way[0])
-        tree1 = find(forest, way[1])
+        esteros[way[0]].addNeighbor(esteros[way[1]], way[2])
+        esteros[way[1]].addNeighbor(esteros[way[0]], way[2])
 
-        if tree0 is not tree1:
-            mst.add(way)
-            res = tree0.union(tree1)
-            forest.append(res)
-            forest.remove(tree0)
-            forest.remove(tree1)
+    # Initialize max-priority queue
+    maxQueue = heapdict()
+    for location in esteros:
+        maxQueue[location] = 0
+    maxQueue[esteros[0]] = -2**63 + 1
+    esteros[0].key = 2**63 - 1
 
-    print("-----------------------------")
-    print(mst)
+    minBarge = 2**63 - 1
+    while len(maxQueue) > 0:
+        (location, width) = maxQueue.popitem()
+        if location.key < minBarge: minBarge = location.key
+        maxBarges[location.label] = minBarge
+        if location is not esteros[0]: mst = mst.union({(location.predecessor, location)})
+        for neighbor in location.neighbors:
+            if neighbor[0] in maxQueue and neighbor[1] > neighbor[0].key:
+                neighbor[0].predecessor = location
+                neighbor[0].key = neighbor[1]
+                maxQueue[neighbor[0]] = -neighbor[1]
 
-    # bfs to each vertex and return min edge to each vertex
-    return mins
-
+    return maxBarges[1:]
 
 ### DON'T touch anything below this line
 #   this already takes care of the input and output
