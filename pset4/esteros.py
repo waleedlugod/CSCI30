@@ -8,12 +8,6 @@ class Vertex:
         self.neighbors: list[tuple[Vertex, int]] = []
         self.predecessor = None
         self.key = 0
-
-    #testing stuff
-    def __stf__(self):
-        return str(self.label)
-    def __repr__(self):
-        return f"{str(self.label)}"
         
     def addNeighbor(self, vertex, weight):
         self.neighbors.append((vertex, weight))
